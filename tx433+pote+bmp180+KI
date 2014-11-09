@@ -22,6 +22,7 @@ const uint8_t oss = 3;                      // Set oversampling setting
 const uint8_t osd = 26;                     // with corresponding oversampling delay 
 
 float T, P;                                 // Set global variables for temperature and pressure 
+  struct datas {int dat1; float Temp;} data;
 
 
 #include <VirtualWire.h>
@@ -61,7 +62,7 @@ void loop()
    int32_t b5;
  
   b5 = temperature();                       // Read and calculate temperature (T) 
-
+  data.Temp = b5;
   Serial.print("Temperature: ");
   Serial.print(T, 2);
   Serial.print(" C, ");
@@ -71,14 +72,16 @@ void loop()
   Serial.print("Pressure: ");
   Serial.print(P, 2);
   Serial.println(" mbar, ");
+  Serial.println(dato);
   
     dato = analogRead(analogInPin);            
-    dato = map(dato, 0, 1023, 0, 255);  
-  
-  char msg[2] = {dato, T*10};
+//    dato = map(dato, 0, 1023, 0, 255);  
+  data.dat1 = dato;
 
   digitalWrite(led_pin, HIGH); // Flash a light to show transmitting
-  vw_send((uint8_t *)msg, 2);
+  vw_send((uint8_t *)&data, 8);
+  Serial.println(data.dat1);
+  Serial.println(data.Temp);
   vw_wait_tx(); // Wait until the whole message is gone
   digitalWrite(led_pin, LOW);
   delay(1000);
